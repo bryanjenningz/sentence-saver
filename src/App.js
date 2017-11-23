@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 let dictionary = {};
-setTimeout(() => {
-  import("./dictionary.json").then(d => dictionary = d);
-}, 0);
+import("./dictionary.json").then(d => dictionary = d);
 
 const findEntries = word =>
   word.length === 0 ? null : dictionary[word] || findEntries(word.slice(0, -1));
