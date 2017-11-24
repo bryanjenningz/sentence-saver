@@ -49,8 +49,8 @@ class App extends Component {
           {entries && entries.length > 0
             ? entries.map(([trad, simp, pro, def], i) => (
                 <div key={i} className="card bg-light mb-3">
-                  <div className="card-header">
-                    {simp}
+                  <h4 className="card-header">
+                    {simp} {pro}
                     <button
                       className="btn btn-primary float-right"
                       onClick={() =>
@@ -61,9 +61,8 @@ class App extends Component {
                     >
                       +
                     </button>
-                  </div>
+                  </h4>
                   <div className="card-body">
-                    <h4 className="card-title">{pro}</h4>
                     <p className="card-text">{def}</p>
                   </div>
                 </div>
@@ -84,8 +83,8 @@ class App extends Component {
             </div>
           : words.map(([trad, simp, pro, def], i) => (
               <div key={i} className="card bg-light mb-3">
-                <div className="card-header">
-                  {simp}
+                <h4 className="card-header">
+                  {simp} {pro}
                   <button
                     className="btn btn-danger float-right"
                     onClick={() =>
@@ -95,9 +94,8 @@ class App extends Component {
                   >
                     x
                   </button>
-                </div>
+                </h4>
                 <div className="card-body">
-                  <h4 className="card-title">{pro}</h4>
                   <p className="card-text">{def}</p>
                 </div>
               </div>
@@ -131,7 +129,7 @@ class App extends Component {
               : `Invalid route: ${route}`}
         <div
           className="btn-group btn-block"
-          style={{ position: "absolute", bottom: 0 }}
+          style={{ position: "fixed", bottom: 0 }}
         >
           <button
             className={`btn border ${route === "read"
