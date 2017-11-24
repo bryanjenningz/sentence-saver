@@ -25,6 +25,7 @@ class App extends Component {
           onChange={e =>
             this.setState({ text: e.target.value, selected: null })}
           placeholder="Paste text here"
+          aria-label="Save text"
         />
         <div style={{ fontSize: 30 }}>
           {text.split("").map((char, i) => {
