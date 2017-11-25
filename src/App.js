@@ -33,7 +33,9 @@ class App extends Component {
           placeholder="Paste text here"
           aria-label="Save text"
         />
-        <div style={{ fontSize: 30 }}>
+        <div
+          style={{ fontSize: 30, paddingBottom: selected == null ? 40 : 190 }}
+        >
           {text.split("").map((char, i) => {
             return (
               <span
