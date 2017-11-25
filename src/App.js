@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 let dictionary = {};
-import("./dictionary.json").then(d => dictionary = d);
+import("./dictionary.json").then(d => (dictionary = d));
 
 const findEntries = word =>
   word.length === 0 ? null : dictionary[word] || findEntries(word.slice(0, -1));
@@ -77,29 +77,34 @@ class App extends Component {
     const { words } = this.state;
     return (
       <div>
-        {words.length === 0
-          ? <div className="d-flex flex-column justify-content-center" style={{ height: "90vh" }}>
-              <h3 className="text-center">You have no words added :(</h3>
-            </div>
-          : words.map(([trad, simp, pro, def], i) => (
-              <div key={i} className="card bg-light mb-3">
-                <h4 className="card-header">
-                  {simp} {pro}
-                  <button
-                    className="btn btn-danger float-right"
-                    onClick={() =>
-                      this.setState({
-                        words: words.slice(0, i).concat(words.slice(i + 1))
-                      })}
-                  >
-                    x
-                  </button>
-                </h4>
-                <div className="card-body">
-                  <p className="card-text">{def}</p>
-                </div>
+        {words.length === 0 ? (
+          <div
+            className="d-flex flex-column justify-content-center"
+            style={{ height: "90vh" }}
+          >
+            <h3 className="text-center">You have no words added :(</h3>
+          </div>
+        ) : (
+          words.map(([trad, simp, pro, def], i) => (
+            <div key={i} className="card bg-light mb-3">
+              <h4 className="card-header">
+                {simp} {pro}
+                <button
+                  className="btn btn-danger float-right"
+                  onClick={() =>
+                    this.setState({
+                      words: words.slice(0, i).concat(words.slice(i + 1))
+                    })}
+                >
+                  x
+                </button>
+              </h4>
+              <div className="card-body">
+                <p className="card-text">{def}</p>
               </div>
-            ))}
+            </div>
+          ))
+        )}
       </div>
     );
   };
@@ -107,7 +112,10 @@ class App extends Component {
   renderReview = () => {
     const { words } = this.state;
     return (
-      <div className="d-flex flex-column justify-content-center" style={{ height: "90vh" }}>
+      <div
+        className="d-flex flex-column justify-content-center"
+        style={{ height: "90vh" }}
+      >
         <h1 className="text-center">Review</h1>
         <div className="text-center">Words to study: {words.length}</div>
         <button className="btn btn-primary btn-block">Start</button>
@@ -131,37 +139,37 @@ class App extends Component {
           className="btn-group btn-block"
           style={{ position: "fixed", bottom: 0 }}
         >
-          <button
-            className={`btn border ${route === "read"
-              ? "btn-primary"
-              : "btn-secondary"}`}
-            style={{ width: "33.3333333%" }}
-            onClick={() => this.setState({ route: "read" })}
-          >
-            Read
-          </button>
-          <button
-            className={`btn border ${route === "study"
-              ? "btn-primary"
-              : "btn-secondary"}`}
-            style={{ width: "33.3333333%" }}
-            onClick={() => this.setState({ route: "study" })}
-          >
-            Study
-          </button>
-          <button
-            className={`btn border ${route === "review"
-              ? "btn-primary"
-              : "btn-secondary"}`}
-            style={{ width: "33.3333333%" }}
-            onClick={() => this.setState({ route: "review" })}
-          >
-            Review
-          </button>
+          <RouteButton
+            text="Read"
+            route={route}
+            onClick={route => this.setState({ route })}
+          />
+          <RouteButton
+            text="Study"
+            route={route}
+            onClick={route => this.setState({ route })}
+          />
+          <RouteButton
+            text="Review"
+            route={route}
+            onClick={route => this.setState({ route })}
+          />
         </div>
       </div>
     );
   };
 }
+
+const RouteButton = ({ text, route, onClick }) => (
+  <button
+    className={`btn border ${route === text.toLowerCase()
+      ? "btn-primary"
+      : "btn-secondary"}`}
+    style={{ width: "33.3333333%" }}
+    onClick={() => onClick(text.toLowerCase())}
+  >
+    {text}
+  </button>
+);
 
 export default App;
