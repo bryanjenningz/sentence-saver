@@ -8,7 +8,13 @@ const findEntries = word =>
 const initialText = "早晨去公司食堂吃饭，要了一碗面和一个鸡蛋，面出来以后我问食堂阿姨:蛋呢？阿姨:淡？不淡了，在浇卤就咸了[病了]";
 
 class App extends Component {
-  state = { route: "read", text: initialText, selected: null, words: [] };
+  state = {
+    route: "read",
+    text: initialText,
+    selected: null,
+    words: [],
+    editing: null
+  };
 
   renderRead = () => {
     const { text, selected, words } = this.state;
@@ -55,26 +61,33 @@ class App extends Component {
           }}
         >
           {entries && entries.length > 0
-            ? entries.map(([trad, simp, pro, def], i) => (
-                <div key={i} className="card bg-light mb-3">
-                  <h4 className="card-header">
-                    {simp} {pro}
-                    <button
-                      className="btn btn-primary float-right"
-                      onClick={() =>
-                        this.setState({
-                          words: words.concat([[trad, simp, pro, def]]),
-                          selected: null
-                        })}
-                    >
-                      +
-                    </button>
-                  </h4>
-                  <div className="card-body">
-                    <p className="card-text">{def}</p>
+            ? entries.map(
+                ([traditional, simplified, pronunciation, definition], i) => (
+                  <div key={i} className="card bg-light mb-3">
+                    <h4 className="card-header">
+                      {simplified} {pronunciation}
+                      <button
+                        className="btn btn-primary float-right"
+                        onClick={() =>
+                          this.setState({
+                            words: words.concat({
+                              traditional,
+                              simplified,
+                              pronunciation,
+                              definition
+                            }),
+                            selected: null
+                          })}
+                      >
+                        +
+                      </button>
+                    </h4>
+                    <div className="card-body">
+                      <p className="card-text">{definition}</p>
+                    </div>
                   </div>
-                </div>
-              ))
+                )
+              )
             : null}
         </div>
       </div>
@@ -82,7 +95,46 @@ class App extends Component {
   };
 
   renderStudy = () => {
-    const { words } = this.state;
+    const { words, editing } = this.state;
+    if (typeof editing === "number") {
+      const editingWord = words[editing];
+      return (
+        <div>
+          <h1 className="text-center">Editing</h1>
+          <h4>{editingWord.simplified}</h4>
+          <input
+            className="form-control"
+            defaultValue={editingWord.simplified}
+          />
+          <h4>{editingWord.pronunciation}</h4>
+          <input
+            className="form-control"
+            defaultValue={editingWord.pronunciation}
+          />
+          <h4>{editingWord.definition}</h4>
+          <input
+            className="form-control"
+            defaultValue={editingWord.definition}
+          />
+
+          <div className="btn-group w-100">
+            <button
+              className="btn btn-primary w-50"
+              onClick={() => this.setState({ editing: null })}
+            >
+              Save
+            </button>
+            <button
+              className="btn btn-secondary w-50"
+              onClick={() => this.setState({ editing: null })}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div>
         {words.length === 0 ? (
@@ -93,25 +145,35 @@ class App extends Component {
             <h3 className="text-center">You have no words added :(</h3>
           </div>
         ) : (
-          words.map(([trad, simp, pro, def], i) => (
-            <div key={i} className="card bg-light mb-3">
-              <h4 className="card-header">
-                {simp} {pro}
-                <button
-                  className="btn btn-danger float-right"
-                  onClick={() =>
-                    this.setState({
-                      words: words.slice(0, i).concat(words.slice(i + 1))
-                    })}
-                >
-                  x
-                </button>
-              </h4>
-              <div className="card-body">
-                <p className="card-text">{def}</p>
+          words.map(
+            ({ traditional, simplified, pronunciation, definition }, i) => (
+              <div key={i} className="card bg-light mb-3">
+                <h4 className="card-header">
+                  {simplified} {pronunciation}
+                  <div className="float-right">
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => this.setState({ editing: i })}
+                    >
+                      ✎
+                    </button>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() =>
+                        this.setState({
+                          words: words.slice(0, i).concat(words.slice(i + 1))
+                        })}
+                    >
+                      x
+                    </button>
+                  </div>
+                </h4>
+                <div className="card-body">
+                  <p className="card-text">{definition}</p>
+                </div>
               </div>
-            </div>
-          ))
+            )
+          )
         )}
       </div>
     );
