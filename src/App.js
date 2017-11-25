@@ -45,7 +45,15 @@ class App extends Component {
             );
           })}
         </div>
-        <div>
+        <div
+          style={{
+            position: "fixed",
+            width: "100%",
+            height: "150px",
+            bottom: "25px",
+            overflowY: "auto"
+          }}
+        >
           {entries && entries.length > 0
             ? entries.map(([trad, simp, pro, def], i) => (
                 <div key={i} className="card bg-light mb-3">
