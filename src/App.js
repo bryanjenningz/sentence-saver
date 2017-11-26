@@ -1,4 +1,7 @@
 import React, { Component } from "react";
+import WordDefinition from "./WordDefinition";
+import Tabs from "./Tabs";
+
 let dictionary = {};
 import("./dictionary.json").then(d => (dictionary = d));
 
@@ -9,11 +12,10 @@ const initialText = "早晨去公司食堂吃饭，要了一碗面和一个鸡�
 
 class App extends Component {
   state = {
-    route: "read",
+    tabIndex: 0,
     text: initialText,
     selected: null,
-    words: [],
-    editing: null
+    words: []
   };
 
   renderRead = () => {
@@ -58,36 +60,20 @@ class App extends Component {
             position: "fixed",
             width: "100%",
             height: "150px",
-            bottom: "25px",
+            bottom: 0,
             overflowY: "auto"
           }}
         >
           {entries && entries.length > 0
             ? entries.map(
                 ([traditional, simplified, pronunciation, definition], i) => (
-                  <div key={i} className="card bg-light mb-3">
-                    <h4 className="card-header">
-                      {simplified} {pronunciation}
-                      <button
-                        className="btn btn-primary float-right"
-                        onClick={() =>
-                          this.setState({
-                            words: words.concat({
-                              traditional,
-                              simplified,
-                              pronunciation,
-                              definition
-                            }),
-                            selected: null
-                          })}
-                      >
-                        +
-                      </button>
-                    </h4>
-                    <div className="card-body">
-                      <p className="card-text">{definition}</p>
-                    </div>
-                  </div>
+                  <WordDefinition
+                    key={i}
+                    word={simplified}
+                    pronunciation={pronunciation}
+                    definition={definition}
+                    onClick={newWord => this.setState({ words: words.concat(newWord) })}
+                  />
                 )
               )
             : null}
@@ -97,46 +83,7 @@ class App extends Component {
   };
 
   renderStudy = () => {
-    const { words, editing } = this.state;
-    if (typeof editing === "number") {
-      const editingWord = words[editing];
-      return (
-        <div>
-          <h1 className="text-center">Editing</h1>
-          <h4>{editingWord.simplified}</h4>
-          <input
-            className="form-control"
-            defaultValue={editingWord.simplified}
-          />
-          <h4>{editingWord.pronunciation}</h4>
-          <input
-            className="form-control"
-            defaultValue={editingWord.pronunciation}
-          />
-          <h4>{editingWord.definition}</h4>
-          <input
-            className="form-control"
-            defaultValue={editingWord.definition}
-          />
-
-          <div className="btn-group w-100">
-            <button
-              className="btn btn-primary w-50"
-              onClick={() => this.setState({ editing: null })}
-            >
-              Save
-            </button>
-            <button
-              className="btn btn-secondary w-50"
-              onClick={() => this.setState({ editing: null })}
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      );
-    }
-
+    const { words } = this.state;
     return (
       <div>
         {words.length === 0 ? (
@@ -148,32 +95,15 @@ class App extends Component {
           </div>
         ) : (
           words.map(
-            ({ traditional, simplified, pronunciation, definition }, i) => (
-              <div key={i} className="card bg-light mb-3">
-                <h4 className="card-header">
-                  {simplified} {pronunciation}
-                  <div className="float-right">
-                    <button
-                      className="btn btn-secondary"
-                      onClick={() => this.setState({ editing: i })}
-                    >
-                      ✎
-                    </button>
-                    <button
-                      className="btn btn-danger"
-                      onClick={() =>
-                        this.setState({
-                          words: words.slice(0, i).concat(words.slice(i + 1))
-                        })}
-                    >
-                      x
-                    </button>
-                  </div>
-                </h4>
-                <div className="card-body">
-                  <p className="card-text">{definition}</p>
-                </div>
-              </div>
+            ({ word, pronunciation, definition }, i) => (
+              <WordDefinition
+                key={i}
+                word={word}
+                pronunciation={pronunciation}
+                definition={definition}
+                onClick={() => this.setState({ words: words.slice(0, i).concat(words.slice(i + 1)) })}
+                isSaved={true}
+              />
             )
           )
         )}
@@ -196,52 +126,14 @@ class App extends Component {
   };
 
   render = () => {
-    const { route } = this.state;
-
+    const { tabIndex } = this.state;
     return (
       <div>
-        {route === "read"
-          ? this.renderRead()
-          : route === "study"
-            ? this.renderStudy()
-            : route === "review"
-              ? this.renderReview()
-              : `Invalid route: ${route}`}
-        <div
-          className="btn-group btn-block"
-          style={{ position: "fixed", bottom: 0 }}
-        >
-          <RouteButton
-            text="Read"
-            route={route}
-            onClick={route => this.setState({ route })}
-          />
-          <RouteButton
-            text="Study"
-            route={route}
-            onClick={route => this.setState({ route })}
-          />
-          <RouteButton
-            text="Review"
-            route={route}
-            onClick={route => this.setState({ route })}
-          />
-        </div>
+        <Tabs onChange={tabIndex => this.setState({ tabIndex })} value={tabIndex} />
+        {[this.renderRead, this.renderStudy, this.renderReview][tabIndex]()}
       </div>
     );
   };
 }
-
-const RouteButton = ({ text, route, onClick }) => (
-  <button
-    className={`btn border ${route === text.toLowerCase()
-      ? "btn-primary"
-      : "btn-secondary"}`}
-    style={{ width: "33.3333333%" }}
-    onClick={() => onClick(text.toLowerCase())}
-  >
-    {text}
-  </button>
-);
 
 export default App;
