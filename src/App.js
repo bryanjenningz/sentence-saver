@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import WordDefinition from "./WordDefinition";
 import Tabs from "./Tabs";
+import Input from "material-ui/Input";
 
 let dictionary = {};
 import("./dictionary.json").then(d => (dictionary = d));
@@ -28,10 +29,10 @@ class App extends Component {
     const entryLength = entries ? entries[0][0].length : 0;
     return (
       <div>
-        <input
-          className="form-control"
+        <Input
           onChange={e =>
             this.setState({ text: e.target.value, selected: null })}
+          style={{ width: "100%" }}
           placeholder="Paste text here"
           aria-label="Save text"
         />
