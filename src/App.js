@@ -17,7 +17,11 @@ class App extends Component {
     tabIndex: 0,
     text: initialText,
     selected: null,
-    words: []
+    words: JSON.parse(localStorage.words || "[]")
+  };
+
+  componentDidUpdate = () => {
+    localStorage.words = JSON.stringify(this.state.words);
   };
 
   renderRead = () => {
