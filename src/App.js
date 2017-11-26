@@ -39,15 +39,14 @@ class App extends Component {
           style={{ fontSize: 30, paddingBottom: selected == null ? 40 : 190 }}
         >
           {text.split("").map((char, i) => {
+            const isHighlighted = selected <= i && i < selected + entryLength;
             return (
               <span
                 key={i}
-                className={
-                  selected <= i && i < selected + entryLength
-                    ? "bg-primary text-white"
-                    : ""
-                }
-                style={{ position: "relative" }}
+                style={{
+                  color: isHighlighted ? "white" : "",
+                  backgroundColor: isHighlighted ? "#3f51b5" : ""
+                }}
                 onClick={() => this.setState({ selected: i })}
               >
                 {char}
