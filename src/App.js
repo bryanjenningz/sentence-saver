@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import WordDefinition from "./WordDefinition";
 import Tabs from "./Tabs";
 import Input from "material-ui/Input";
+import Button from "material-ui/Button";
 
 let dictionary = {};
 import("./dictionary.json").then(d => (dictionary = d));
@@ -118,9 +119,15 @@ class App extends Component {
         className="d-flex flex-column justify-content-center"
         style={{ height: "90vh" }}
       >
-        <h1 className="text-center">Review</h1>
-        <div className="text-center">Words to study: {words.length}</div>
-        <button className="btn btn-primary btn-block">Start</button>
+        <h1 style={{ textAlign: "center" }}>Review</h1>
+        <div style={{ textAlign: "center" }}>Words to study: {words.length}</div>
+        <Button
+          raised
+          color="primary"
+          style={{ display: "block", margin: "20px auto" }}
+        >
+          Start
+        </Button>
       </div>
     );
   };
