@@ -10,16 +10,16 @@ import ClearIcon from "material-ui-icons/Clear";
 const styles = theme => ({
   card: {
     minWidth: 275,
-    overflow: "hidden",
+    overflow: "hidden"
   },
   pos: {
     marginBottom: 12,
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.secondary
   },
   buttonContainer: {
     display: "flex",
     contentAlign: "center",
-    alignItems: "center",
+    alignItems: "center"
   }
 });
 
@@ -38,14 +38,17 @@ function WordDefinition(props) {
               <Typography type="body1" className={classes.pos}>
                 {pronunciation}
               </Typography>
-              <Typography component="p">
-                {definition}
-              </Typography>
+              <Typography component="p">{definition}</Typography>
             </CardContent>
           </Grid>
           <Grid item xs={3} className={classes.buttonContainer}>
             <CardActions>
-              <Button fab color={isSaved ? "accent" : "primary"} onClick={() => props.onClick({ word, pronunciation, definition })}>
+              <Button
+                fab
+                color={isSaved ? "accent" : "primary"}
+                onClick={() =>
+                  props.onClick({ word, pronunciation, definition })}
+              >
                 {isSaved ? <ClearIcon /> : <AddIcon />}
               </Button>
             </CardActions>
