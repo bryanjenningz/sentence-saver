@@ -3,6 +3,7 @@ import WordDefinition from "./WordDefinition";
 import Tabs from "./Tabs";
 import Input from "material-ui/Input";
 import Button from "material-ui/Button";
+import Snackbar from "material-ui/Snackbar";
 
 let dictionary = {};
 import("./dictionary.json").then(d => (dictionary = d));
@@ -117,15 +118,29 @@ class App extends Component {
     tabIndex: 0,
     text: initialText,
     selected: null,
-    words: JSON.parse(localStorage.words || "[]")
+    words: JSON.parse(localStorage.words || "[]"),
+    message: null
   };
 
   componentDidUpdate = () => {
     localStorage.words = JSON.stringify(this.state.words);
   };
 
+  setMessage = message => {
+    if (typeof this.timeoutId === "number") {
+      clearTimeout(this.timeoutId);
+    }
+    this.setState({ message }, () => {
+      this.timeoutId = setTimeout(() => {
+        clearTimeout(this.timeoutId);
+        this.timeoutId = null;
+        this.setState({ message: null });
+      }, 2000);
+    });
+  };
+
   render = () => {
-    const { text, selected, words, tabIndex } = this.state;
+    const { text, selected, words, tabIndex, message } = this.state;
     const currentTab = (() => {
       switch (tabIndex) {
         case 0:
@@ -136,8 +151,12 @@ class App extends Component {
               words={words}
               setText={text => this.setState({ text, selected: null })}
               select={selected => this.setState({ selected })}
-              addWord={newWord =>
-                this.setState({ words: words.concat(newWord) })}
+              addWord={newWord => {
+                this.setState(
+                  { words: words.concat(newWord) },
+                  () => this.setMessage(`Added ${newWord.word}`)
+                );
+              }}
             />
           );
         case 1:
@@ -163,6 +182,14 @@ class App extends Component {
           value={tabIndex}
         />
         {currentTab}
+        <Snackbar
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          open={!!message}
+          SnackbarContentProps={{
+            'aria-describedby': 'message-id',
+          }}
+          message={<span id="message-id">{message}</span>}
+        />
       </div>
     );
   };
