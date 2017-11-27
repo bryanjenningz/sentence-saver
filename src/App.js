@@ -152,9 +152,8 @@ class App extends Component {
               setText={text => this.setState({ text, selected: null })}
               select={selected => this.setState({ selected })}
               addWord={newWord => {
-                this.setState(
-                  { words: words.concat(newWord) },
-                  () => this.setMessage(`Added ${newWord.word}`)
+                this.setState({ words: words.concat(newWord) }, () =>
+                  this.setMessage(`Added ${newWord.word}`)
                 );
               }}
             />
@@ -163,10 +162,17 @@ class App extends Component {
           return (
             <EditTab
               words={words}
-              removeWord={i =>
-                this.setState({
-                  words: words.slice(0, i).concat(words.slice(i + 1))
-                })}
+              removeWord={i => {
+                this.setState(
+                  {
+                    words: words.slice(0, i).concat(words.slice(i + 1))
+                  },
+                  () => {
+                    const removedWord = words[i];
+                    this.setMessage(`Removed ${removedWord.word}`);
+                  }
+                );
+              }}
             />
           );
         case 2:
@@ -186,7 +192,7 @@ class App extends Component {
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
           open={!!message}
           SnackbarContentProps={{
-            'aria-describedby': 'message-id',
+            "aria-describedby": "message-id"
           }}
           message={<span id="message-id">{message}</span>}
         />
