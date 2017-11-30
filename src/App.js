@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import WordDefinition from "./WordDefinition";
+import ReviewCard from "./ReviewCard";
 import Tabs from "./Tabs";
 import Input from "material-ui/Input";
 import Button from "material-ui/Button";
@@ -96,22 +97,55 @@ const EditTab = ({ words, removeWord }) => (
   </div>
 );
 
-const ReviewTab = ({ words }) => (
-  <div
-    className="d-flex flex-column justify-content-center"
-    style={{ height: "90vh" }}
-  >
-    <h1 style={{ textAlign: "center" }}>Review</h1>
-    <div style={{ textAlign: "center" }}>Words to study: {words.length}</div>
-    <Button
-      raised
-      color="primary"
-      style={{ display: "block", margin: "20px auto" }}
+const ReviewTab = ({
+  words,
+  reviewing,
+  backShown,
+  startReviewing,
+  stopReviewing,
+  pass,
+  fail,
+  showBack
+}) =>
+  reviewing ? (
+    <div>
+      <Button
+        raised
+        color="primary"
+        style={{ display: "block", margin: "20px auto" }}
+        onClick={stopReviewing}
+      >
+        Stop Reviewing
+      </Button>
+      <ReviewCard
+        backShown={backShown}
+        word={words[0].word}
+        pronunciation={words[0].pronunciation}
+        definition={words[0].definition}
+        pass={pass}
+        fail={fail}
+        showBack={showBack}
+      />
+    </div>
+  ) : (
+    <div
+      className="d-flex flex-column justify-content-center"
+      style={{ height: "90vh" }}
     >
-      Start
-    </Button>
-  </div>
-);
+      <h1 style={{ textAlign: "center" }}>Review</h1>
+      <div style={{ textAlign: "center" }}>Words to study: {words.length}</div>
+      {words.length === 0 ? null : (
+        <Button
+          raised
+          color="primary"
+          style={{ display: "block", margin: "20px auto" }}
+          onClick={startReviewing}
+        >
+          Start
+        </Button>
+      )}
+    </div>
+  );
 
 class App extends Component {
   state = {
@@ -119,7 +153,9 @@ class App extends Component {
     text: initialText,
     selected: null,
     words: JSON.parse(localStorage.words || "[]"),
-    message: null
+    message: null,
+    reviewing: false,
+    backShown: false
   };
 
   componentDidUpdate = () => {
@@ -140,7 +176,15 @@ class App extends Component {
   };
 
   render = () => {
-    const { text, selected, words, tabIndex, message } = this.state;
+    const {
+      text,
+      selected,
+      words,
+      tabIndex,
+      message,
+      reviewing,
+      backShown
+    } = this.state;
     const currentTab = (() => {
       switch (tabIndex) {
         case 0:
@@ -176,7 +220,38 @@ class App extends Component {
             />
           );
         case 2:
-          return <ReviewTab words={words} />;
+          return (
+            <ReviewTab
+              words={words}
+              reviewing={reviewing}
+              backShown={backShown}
+              startReviewing={() => {
+                this.setState({ reviewing: true, backShown: false });
+              }}
+              stopReviewing={() => {
+                this.setState({ reviewing: false, backShown: false });
+              }}
+              showBack={() => {
+                this.setState({ backShown: true });
+              }}
+              pass={() => {
+                const { words } = this.state;
+                words[0].timeInterval += 1;
+                words[0].nextTime =
+                  Date.now() + Math.pow(2, words[0].timeInterval) * 60000;
+                words.sort((a, b) => a.nextTime - b.nextTime);
+                this.setState({ words, backShown: false });
+              }}
+              fail={() => {
+                const { words } = this.state;
+                words[0].timeInterval = 0;
+                words[0].nextTime =
+                  Date.now() + Math.pow(2, words[0].timeInterval) * 60000;
+                words.sort((a, b) => a.nextTime - b.nextTime);
+                this.setState({ words, backShown: false });
+              }}
+            />
+          );
         default:
           throw new Error(`Invalid tab index ${tabIndex}`);
       }

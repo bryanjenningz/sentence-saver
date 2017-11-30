@@ -47,7 +47,13 @@ function WordDefinition(props) {
                 fab
                 color={isSaved ? "accent" : "primary"}
                 onClick={() =>
-                  props.onClick({ word, pronunciation, definition })}
+                  props.onClick({
+                    word,
+                    pronunciation,
+                    definition,
+                    timeInterval: 1,
+                    nextTime: Date.now() + 60000
+                  })}
               >
                 {isSaved ? <ClearIcon /> : <AddIcon />}
               </Button>
