@@ -9,7 +9,8 @@ import Snackbar from "material-ui/Snackbar";
 let dictionary = {};
 import("./dictionary.json").then(d => (dictionary = d));
 
-const initialText = "早晨去公司食堂吃饭，要了一碗面和一个鸡蛋，面出来以后我问食堂阿姨:蛋呢？阿姨:淡？不淡了，在浇卤就咸了[病了]";
+const initialText =
+  "早晨去公司食堂吃饭，要了一碗面和一个鸡蛋，面出来以后我问食堂阿姨:蛋呢？阿姨:淡？不淡了，在浇卤就咸了[病了]";
 
 const findEntries = word =>
   word.length === 0 ? null : dictionary[word] || findEntries(word.slice(0, -1));

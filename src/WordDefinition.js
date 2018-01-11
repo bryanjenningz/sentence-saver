@@ -53,7 +53,8 @@ function WordDefinition(props) {
                     definition,
                     timeInterval: 1,
                     nextTime: Date.now() + 60000
-                  })}
+                  })
+                }
               >
                 {isSaved ? <ClearIcon /> : <AddIcon />}
               </Button>
